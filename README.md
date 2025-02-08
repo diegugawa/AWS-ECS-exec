@@ -1,6 +1,6 @@
 # AWS ECS Exec
 
-AWS ECS Exec is an interactive tool written in Python that simplifies executing commands in ECS/Fargate containers using AWS credentials. It interactively helps you discover your ECS clusters, services, tasks, and containers, then executes a command (default is `/bin/sh`) using AWS ECS Exec. It also logs the final command for easy reuse.
+AWS ECS Exec is an interactive tool written in Python that simplifies executing commands in ECS/Fargate containers using AWS credentials. It interactively helps you discover your ECS clusters, services, tasks, and containers, then executes a command (default is `/bin/sh`) using AWS ECS Exec. It also logs the final command for easy reuse. This tool works seamlessly with the AWS Session Manager, making it a popular choice in the community.
 
 ## Features
 
@@ -16,11 +16,13 @@ AWS ECS Exec is an interactive tool written in Python that simplifies executing 
 
 ## Prerequisites
 
+Before using this tool, ensure the following are installed and configured:
+
 - **Python:** Requires Python 3.6 or later. This tool is fully compatible with Python 3.11.
-- **AWS CLI:** Ensure AWS CLI is installed and configured.
-- **AWS Credentials:** Must have valid AWS credentials (configured via `aws configure` or AWS SSO).
-- **Python Packages:** `boto3` and `botocore` (install via pip).
-- **session-manager-plugin (Optional):** Required only when using the `--ssm` flag.
+- **AWS CLI:** Must be installed and configured (using `aws configure` or AWS SSO) as this tool relies on AWS CLI commands to list profiles and execute ECS commands.
+- **AWS Credentials:** Ensure you have valid AWS credentials set up.
+- **Python Packages:** Install `boto3` and `botocore` via pip.
+- **session-manager-plugin (Optional):** Required if you plan to use the `--ssm` flag to force AWS Session Manager usage. This plugin enhances the ECS Exec experience and is highly valued in the community.
 
 ## Quick Start Using pyenv
 
@@ -54,7 +56,10 @@ If you don’t have the desired Python version installed, you can quickly set it
    pip install boto3 botocore
    ```
 
-5. **Run the tool:**
+5. **(Optional) To use the Session Manager Plugin, ensure it is installed.**  
+   You can download and install it from the [AWS documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
+
+6. **Run the tool:**
 
    ```bash
    python ecsexec.py [OPTIONS]
@@ -132,6 +137,8 @@ python -m unittest test_ecsexec.py
 - If ECS Exec is not enabled for the selected task/container, a clear error message with remediation steps will be displayed.
 - The tool is designed for macOS and Linux environments.
 - This tool is fully compatible with Python 3.11.
+- **AWS CLI** must be installed and configured before using this tool.
+- **session-manager-plugin** is optional and should be installed if you intend to use the `--ssm` flag to leverage AWS Session Manager functionality.
 
 ## Repository
 
@@ -148,4 +155,3 @@ This project is licensed under the MIT License.
 ## Contributing
 
 Contributions, bug reports, and feature requests are welcome! Please open an issue or submit a pull request.
-
