@@ -1,6 +1,6 @@
 # AWS ECS Exec
 
-AWS ECS Exec is an interactive tool written in Python that simplifies executing commands in ECS/Fargate containers using AWS credentials. It interactively helps you discover your ECS clusters, services, tasks, and containers, then executes a command (default is `/bin/sh`) using AWS ECS Exec. It also logs the final command for easy reuse. This tool works seamlessly with the AWS Session Manager, making it a popular choice in the community.
+AWS ECS Exec is an interactive tool written in Python that simplifies executing commands in ECS/Fargate containers using AWS credentials. It interactively helps you discover your ECS clusters, services, tasks, and containers, then executes a command (default is `/bin/sh`) using AWS ECS Exec. It also logs the final command for easy reuse. This tool works seamlessly with AWS Session Manager, making it a popular choice in the community.
 
 ## Features
 
@@ -41,25 +41,31 @@ If you don’t have the desired Python version installed, you can quickly set it
    pyenv install 3.11.0
    ```
 
-3. **Create a virtual environment:**
+3. **Set Python 3.11 as the local version:**
 
    ```bash
-   pyenv virtualenv 3.11.0 ecsexec-env
-   pyenv local ecsexec-env
+   pyenv local 3.11
    ```
 
-4. **Clone the repository and install dependencies:**
+4. **Create a virtual environment using Python’s built-in venv module:**
 
    ```bash
-   git clone git@github.com:diegugawa/AWS-ECS-exec.git
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+5. **Clone the repository and install dependencies:**
+
+   ```bash
+   git clone git@github.com:diegugawa/aws-ecs-exec.git
    cd AWS-ECS-exec
    pip install boto3 botocore
    ```
 
-5. **(Optional) To use the Session Manager Plugin, ensure it is installed.**  
+6. **(Optional) To use the Session Manager Plugin, ensure it is installed.**  
    You can download and install it from the [AWS documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
 
-6. **Run the tool:**
+7. **Run the tool:**
 
    ```bash
    python ecsexec.py [OPTIONS]
@@ -145,7 +151,7 @@ python -m unittest test_ecsexec.py
 Clone the repository using:
 
 ```bash
-git clone git@github.com:diegugawa/AWS-ECS-exec.git
+git clone git@github.com:diegugawa/aws-ecs-exec.git
 ```
 
 ## License
