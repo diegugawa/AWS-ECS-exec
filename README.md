@@ -58,7 +58,7 @@ If you don’t have the desired Python version installed, you can quickly set it
 
    ```bash
    git clone git@github.com:diegugawa/aws-ecs-exec.git
-   cd AWS-ECS-exec
+   cd aws-ecs-exec
    pip install boto3 botocore
    ```
 
