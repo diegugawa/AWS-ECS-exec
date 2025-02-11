@@ -1,28 +1,33 @@
-# **AWS ECS Exec Utility**
+# **AWS ECS Exec**
 
-## **Overview**
-`ecsexec.py` is a Python-based interactive tool that simplifies executing commands inside **AWS ECS/Fargate containers** using **ECS Exec** and **AWS Session Manager**.
+AWS ECS Exec is an interactive Python tool that simplifies executing commands in **ECS/Fargate containers** using **AWS credentials**. It interactively helps you **discover ECS clusters, services, tasks, and containers**, then executes a command (`/bin/sh` by default) using **AWS ECS Exec**. 
 
-### **Key Features**
-- **Interactive AWS Profile & Region Selection**  
-  - If not provided, the tool prompts for selection.
-- **Automated ECS Cluster, Service, Task & Container Discovery**  
-  - Reduces the need to manually look up resources.
+This tool **requires AWS Session Manager Plugin** and ensures a seamless experience for developers and DevOps teams.
+
+---
+
+## **🚀 Features**
+- **Interactive AWS Profile Selection**  
+  - Prompts for AWS profile if not specified.
+- **Automated Discovery of ECS Resources**  
+  - No need to manually look up clusters, services, tasks, or containers.
 - **Auto-Selection for Single Container Tasks**  
-  - If a task has only one container, it is auto-selected.
-- **Logs the Final Executed Command**  
-  - Makes it easy to copy for reuse.
-- **Requires AWS Session Manager Plugin**  
-  - Enforces secure ECS Exec execution.
-- **Verbose Mode for Debugging (`--verbose`)**  
-  - Logs additional details.
-- **Unit Tested with Python's `unittest` Framework**  
-  - Ensures stability and reliability.
+  - If only one container exists, the tool auto-selects it.
+- **Command Logging for Easy Reuse**  
+  - Displays the full `aws ecs execute-command` line for future reference.
+- **Session Manager Plugin (SSM) Required**  
+  - Enforces secure execution via AWS SSM.
+- **Verbose Logging (`--verbose`) for Debugging**  
+  - Enables additional log details.
+- **Clear Error Handling**  
+  - Provides descriptive error messages when ECS Exec isn’t enabled.
+- **Unit Tested**  
+  - Includes tests using Python’s `unittest` framework.
 
 ---
 
 ## **📌 Prerequisites**
-Before using this tool, ensure the following are installed:
+Before using this tool, ensure the following are installed and configured:
 
 ### **Required**
 1. **Python 3.6+ (Python 3.11 Recommended)**
@@ -35,39 +40,44 @@ Before using this tool, ensure the following are installed:
    ```
    If not installed, follow the [AWS CLI installation guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 
-3. **AWS Session Manager Plugin** (Required)
+3. **AWS Session Manager Plugin (Required)**
    ```sh
    session-manager-plugin --version
    ```
-   If missing, install it via:
-   - macOS (Homebrew):  
+   If missing, install via:
+   - macOS (Homebrew):
      ```sh
      brew install session-manager-plugin
      ```
-   - Linux:  
+   - Linux:
      ```sh
      sudo apt install session-manager-plugin
      ```
    - Windows: Download from [AWS Docs](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
 
-4. **AWS Credentials** (Must Have `ecs:ExecuteCommand` Permissions)
-   ```sh
-   aws configure
-   ```
-   - Ensure your profile has `ecs:ExecuteCommand` permissions.
-   - For AWS SSO users:
+4. **AWS Credentials Configured**
+   - Run `aws configure` or use AWS SSO:
      ```sh
      aws sso login --profile default
      ```
-
-5. **Required Python Packages**
-   ```sh
-   pip install boto3 botocore
-   ```
+   - Ensure IAM role includes:
+     ```json
+     {
+       "Effect": "Allow",
+       "Action": [
+         "ecs:ExecuteCommand",
+         "ssmmessages:CreateControlChannel",
+         "ssmmessages:CreateDataChannel",
+         "ssmmessages:OpenControlChannel",
+         "ssmmessages:OpenDataChannel"
+       ],
+       "Resource": "*"
+     }
+     ```
 
 ---
 
-## **🚀 Installation**
+## **🔧 Installation**
 Clone the repository and set up a virtual environment:
 
 ```sh
@@ -80,7 +90,7 @@ pip install boto3 botocore
 
 ---
 
-## **🔧 Usage**
+## **🚀 Usage**
 Run the script to execute a command inside an ECS container:
 
 ```sh
@@ -92,7 +102,16 @@ This will:
 2. **Prompt for selection (if multiple options exist).**
 3. **Run an interactive shell (`/bin/sh`) inside the container.**
 
-### **Common Usage Examples**
+### **📌 Supported Options**
+| Option | Description |
+|--------|-------------|
+| `--region <region>` | AWS region (e.g., `us-west-2`). Uses AWS CLI config if not provided. |
+| `--profile <profile>` | AWS profile name. Prompts interactively if not provided. |
+| `--command <command>` | Command to execute inside the container (default: `/bin/sh`). |
+| `--ssm` | Uses AWS **Session Manager Plugin** (required). |
+| `--verbose` | Enables **detailed logs for debugging**. |
+
+### **Example Commands**
 #### **1️⃣ Execute `/bin/sh` in a Container**
 ```sh
 python ecsexec.py --profile default --region us-west-2
@@ -137,28 +156,8 @@ Error:
 ```
 An error occurred (AccessDeniedException) when calling the ExecuteCommand operation
 ```
-✅ **Solution**: Ensure your IAM role has the following permissions:
-```json
-{
-  "Effect": "Allow",
-  "Action": [
-    "ecs:ExecuteCommand",
-    "ssmmessages:CreateControlChannel",
-    "ssmmessages:CreateDataChannel",
-    "ssmmessages:OpenControlChannel",
-    "ssmmessages:OpenDataChannel"
-  ],
-  "Resource": "*"
-}
-```
-✅ If using SSM, add:
-```json
-{
-  "Effect": "Allow",
-  "Action": "ssm:StartSession",
-  "Resource": "*"
-}
-```
+✅ **Solution**: Ensure your IAM role has the correct permissions (see prerequisites above).
+
 ---
 
 ### **🔴 Session Manager Plugin Not Found**
@@ -167,7 +166,7 @@ Error:
 SessionManagerPlugin is not found.
 ```
 ✅ **Solution**:
-- Install the **Session Manager Plugin**:  
+- Install the **Session Manager Plugin**:
   ```sh
   brew install session-manager-plugin
   ```
